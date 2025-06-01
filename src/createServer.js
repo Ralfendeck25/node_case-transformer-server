@@ -4,7 +4,7 @@
 /* const { URL } = require('url'); */
 const http = require('http');
 const url = require('url');
-const { convertToCase } = require('./convertToCase');
+const { convertToCase } = require('./convertToCase/convertToCase');
 
 const SUPPORTED_CASES = ['SNAKE', 'KEBAB', 'CAMEL', 'PASCAL', 'UPPER'];
 
