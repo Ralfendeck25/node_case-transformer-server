@@ -1,40 +1,24 @@
 const http = require('http');
-const { validateUrl } = require('./validateUrl'); // Fixed typo in function name
+const { validateUrl } = require('./validateUrl');
 const { respondPositively } = require('./validatedResponse');
 
 function createServer() {
-  return http.createServer((req, res) => {
-    try {
-      const fullUrl = `http://${req.headers.host}${req.url}`;
-      const validationResult = validateUrl(fullUrl); // Consistent naming
+  const server = http.createServer((req, res) => {
+    const fullUrl = `http://${req.headers.host}${req.url}`;
+    const resultValid = validateUrl(fullUrl);
 
-      if (!validationResult.valid) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+    if (!resultValid.valid) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(resultValid.errors));
 
-        return res.end(
-          JSON.stringify({
-            error: 'Invalid URL',
-            details: validationResult.errors,
-          }),
-        );
-      }
-
-      const response = respondPositively(fullUrl);
-
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-
-      return res.end(JSON.stringify(response));
-    } catch (error) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-
-      return res.end(
-        JSON.stringify({
-          error: 'Internal server error',
-          details: error.message,
-        }),
-      );
+      return;
     }
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(respondPositively(fullUrl)));
   });
+
+  return server;
 }
 
 module.exports = {

@@ -1,13 +1,16 @@
 const { convertToCase } = require('./convertToCase/convertToCase');
 const SUPPORTED_CASES = ['SNAKE', 'KEBAB', 'CAMEL', 'PASCAL', 'UPPER'];
 
-function validateRequest(url) {
+function validateRequest(urlString) {
   const errors = [];
+  let textToConvert = '';
+  let targetCase = '';
 
   try {
-    const parsedUrl = new URL(url);
-    const textToConvert = parsedUrl.pathname.slice(1);
-    const targetCase = parsedUrl.searchParams.get('toCase');
+    const url = new URL(urlString, 'http://test.com');
+
+    textToConvert = url.pathname.slice(1);
+    targetCase = url.searchParams.get('toCase');
 
     if (!textToConvert) {
       errors.push({
@@ -35,9 +38,13 @@ function validateRequest(url) {
       targetCase,
     };
   } catch (e) {
+    errors.push({ message: 'Invalid URL format' });
+
     return {
       valid: false,
-      errors: [{ message: 'Invalid URL format' }],
+      errors,
+      textToConvert,
+      targetCase,
     };
   }
 }
@@ -47,9 +54,7 @@ function respondPositively(url) {
 
   if (!validation.valid) {
     return {
-      status: 'error',
       errors: validation.errors,
-      processedAt: new Date().toISOString(),
     };
   }
 
@@ -59,12 +64,10 @@ function respondPositively(url) {
   );
 
   return {
-    status: 'success',
     originalCase,
     targetCase: validation.targetCase,
     originalText: validation.textToConvert,
     convertedText,
-    processedAt: new Date().toISOString(),
   };
 }
 
