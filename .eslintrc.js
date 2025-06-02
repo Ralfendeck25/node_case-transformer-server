@@ -4,16 +4,7 @@ module.exports = {
     jest: true
   },
   rules: {
-    'no-proto': 0,
-    "no-console": "off",
-    "max-len": ["error", {
-      "code": 80,
-      "ignoreUrls": true,
-      "ignoreStrings": true,
-      "ignoreTemplateLiterals": true,
-      "ignoreRegExpLiterals": true,
-      "ignorePattern": "^const\\s.+\\s=\\srequire\\("
-    }]
+    'no-proto': 0
   },
   plugins: ['jest']
 };
